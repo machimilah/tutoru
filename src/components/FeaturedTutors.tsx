@@ -1,16 +1,17 @@
 import { Star, MapPin, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const TUTORS = [
-  { name: "Sarah Chen", subject: "Calculus & Linear Algebra", university: "MIT", rating: 4.9, reviews: 47, price: 25, area: "Online", avatar: "SC" },
-  { name: "James Okafor", subject: "Organic Chemistry", university: "Stanford", rating: 4.8, reviews: 32, price: 30, area: "Campus Area", avatar: "JO" },
-  { name: "María García", subject: "Spanish Literature", university: "NYU", rating: 5.0, reviews: 28, price: 20, area: "Downtown", avatar: "MG" },
-  { name: "Alex Kim", subject: "Computer Science", university: "UCLA", rating: 4.7, reviews: 55, price: 35, area: "Online", avatar: "AK" },
-  { name: "Priya Patel", subject: "Microeconomics", university: "Columbia", rating: 4.9, reviews: 41, price: 22, area: "North Side", avatar: "PP" },
-  { name: "Luca Rossi", subject: "Physics I & II", university: "Harvard", rating: 4.8, reviews: 38, price: 28, area: "Online", avatar: "LR" },
+  { id: "sarah-chen", name: "Sarah Chen", subject: "Calculus & Linear Algebra", university: "MIT", rating: 4.9, reviews: 47, price: 25, area: "Online", avatar: "SC" },
+  { id: "james-okafor", name: "James Okafor", subject: "Organic Chemistry", university: "Stanford", rating: 4.8, reviews: 32, price: 30, area: "Campus Area", avatar: "JO" },
+  { id: "maria-garcia", name: "María García", subject: "Spanish Literature", university: "NYU", rating: 5.0, reviews: 28, price: 20, area: "Downtown", avatar: "MG" },
+  { id: "alex-kim", name: "Alex Kim", subject: "Computer Science", university: "UCLA", rating: 4.7, reviews: 55, price: 35, area: "Online", avatar: "AK" },
+  { id: "priya-patel", name: "Priya Patel", subject: "Microeconomics", university: "Columbia", rating: 4.9, reviews: 41, price: 22, area: "North Side", avatar: "PP" },
+  { id: "luca-rossi", name: "Luca Rossi", subject: "Physics I & II", university: "Harvard", rating: 4.8, reviews: 38, price: 28, area: "Online", avatar: "LR" },
 ];
 
 const TutorCard = ({ tutor }: { tutor: typeof TUTORS[0] }) => (
-  <div className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+  <Link to={`/tutor/${tutor.id}`} className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 block">
     <div className="flex items-start gap-4">
       <div className="w-12 h-12 rounded-full bg-primary/10 text-primary font-display font-bold flex items-center justify-center text-sm shrink-0">
         {tutor.avatar}
@@ -39,7 +40,7 @@ const TutorCard = ({ tutor }: { tutor: typeof TUTORS[0] }) => (
         <span className="text-xs">{tutor.area}</span>
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 const FeaturedTutors = () => (
@@ -49,7 +50,7 @@ const FeaturedTutors = () => (
         <h2 className="font-display text-2xl font-bold text-foreground">Featured Tutors</h2>
         <p className="text-muted-foreground text-sm mt-1">Top-rated students ready to help you succeed</p>
       </div>
-      <button className="text-sm text-primary font-medium hover:underline underline-offset-4">View all →</button>
+      <Link to="/find-tutors" className="text-sm text-primary font-medium hover:underline underline-offset-4">View all →</Link>
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {TUTORS.map((tutor) => (
