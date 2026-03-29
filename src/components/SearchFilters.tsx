@@ -110,11 +110,14 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
 };
 
 const SearchFilters = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("");
   const [university, setUniversity] = useState("");
   const [area, setArea] = useState("");
   const [language, setLanguage] = useState("");
+
+  const handleSearch = () => navigate("/find-tutors");
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -126,9 +129,10 @@ const SearchFilters = () => {
           placeholder="Search for a tutor, subject, or topic..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           className="w-full pl-14 pr-32 py-4 bg-card border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-base font-body shadow-sm transition-all"
         />
-        <Button variant="hero" size="lg" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl">
+        <Button variant="hero" size="lg" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl" onClick={handleSearch}>
           Search
         </Button>
       </div>
