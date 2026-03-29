@@ -1,6 +1,7 @@
 import { Search, MapPin, GraduationCap, Building2, Globe, ChevronDown, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const COURSES = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "Economics", "Literature", "History", "Psychology", "Engineering"];
 const UNIVERSITIES = ["MIT", "Stanford", "Harvard", "Oxford", "Cambridge", "UCLA", "NYU", "Columbia", "Yale", "Princeton"];
