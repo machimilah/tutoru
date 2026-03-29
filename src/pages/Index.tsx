@@ -5,16 +5,13 @@ import FeaturedTutors from "@/components/FeaturedTutors";
 import Scene3D from "@/components/Scene3D";
 
 const Index = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background pt-24">
     <Navbar />
 
     {/* Hero Section */}
     <section className="relative overflow-hidden min-h-[520px]">
       <Scene3D />
       <div className="relative z-10 flex flex-col items-center pt-20 pb-16 px-4">
-        <span className="inline-block bg-primary/10 text-primary font-medium text-sm px-4 py-1.5 rounded-full mb-6 animate-fade-up">
-          🎓 Peer-to-peer tutoring made easy
-        </span>
         <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground text-center max-w-3xl leading-tight">
           Learn from students
           <span className="text-primary"> who get it</span>

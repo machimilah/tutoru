@@ -10,7 +10,7 @@ const steps = [
 ];
 
 const BecomeTutor = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background pt-24">
     <Navbar />
     <div className="max-w-4xl mx-auto px-4 py-16 text-center">
       <span className="inline-block bg-primary/10 text-primary font-medium text-sm px-4 py-1.5 rounded-full mb-6">

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Mail, Lock, User } from "lucide-react";
 
 const Signup = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background pt-24">
     <Navbar />
     <div className="flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8">

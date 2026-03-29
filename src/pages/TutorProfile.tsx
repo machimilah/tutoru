@@ -18,7 +18,7 @@ const TutorProfile = () => {
   const tutor = TUTORS[id || ""] || TUTORS["sarah-chen"];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-24">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Link to="/find-tutors" className="text-sm text-primary hover:underline underline-offset-4 mb-6 inline-block">← Back to tutors</Link>

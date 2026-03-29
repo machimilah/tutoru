@@ -10,7 +10,7 @@ const steps = [
 ];
 
 const HowItWorks = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background pt-24">
     <Navbar />
     <div className="max-w-4xl mx-auto px-4 py-16 text-center">
       <h1 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4">How It Works</h1>
