@@ -1,16 +1,48 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/Navbar";
+import SearchFilters from "@/components/SearchFilters";
+import StatsBar from "@/components/StatsBar";
+import FeaturedTutors from "@/components/FeaturedTutors";
+import heroBg from "@/assets/hero-bg.jpg";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+const Index = () => (
+  <div className="min-h-screen bg-background">
+    <Navbar />
+
+    {/* Hero Section */}
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 opacity-20">
+        <img src={heroBg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
+      </div>
+      <div className="relative z-10 flex flex-col items-center pt-20 pb-16 px-4">
+        <span className="inline-block bg-primary/10 text-primary font-medium text-sm px-4 py-1.5 rounded-full mb-6 animate-fade-up">
+          🎓 Peer-to-peer tutoring made easy
+        </span>
+        <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground text-center max-w-3xl leading-tight">
+          Learn from students
+          <span className="text-primary"> who get it</span>
+        </h1>
+        <p className="text-muted-foreground text-lg md:text-xl text-center max-w-xl mt-5 mb-10">
+          Find affordable tutors from your university who've aced the same courses you're taking.
+        </p>
+        <SearchFilters />
+      </div>
+    </section>
+
+    {/* Stats */}
+    <div className="py-8 border-y border-border/50">
+      <StatsBar />
     </div>
-  );
-};
 
-const Index = PlaceholderIndex;
+    {/* Featured Tutors */}
+    <section className="py-16 px-4">
+      <FeaturedTutors />
+    </section>
+
+    {/* Footer */}
+    <footer className="border-t border-border py-8 px-6 text-center text-sm text-muted-foreground">
+      © 2026 StudyMate. Built by students, for students.
+    </footer>
+  </div>
+);
 
 export default Index;
