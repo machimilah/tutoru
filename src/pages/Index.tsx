@@ -2,17 +2,15 @@ import Navbar from "@/components/Navbar";
 import SearchFilters from "@/components/SearchFilters";
 import StatsBar from "@/components/StatsBar";
 import FeaturedTutors from "@/components/FeaturedTutors";
-import heroBg from "@/assets/hero-bg.jpg";
+import Scene3D from "@/components/Scene3D";
 
 const Index = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
 
     {/* Hero Section */}
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 opacity-20">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
-      </div>
+    <section className="relative overflow-hidden min-h-[520px]">
+      <Scene3D />
       <div className="relative z-10 flex flex-col items-center pt-20 pb-16 px-4">
         <span className="inline-block bg-primary/10 text-primary font-medium text-sm px-4 py-1.5 rounded-full mb-6 animate-fade-up">
           🎓 Peer-to-peer tutoring made easy

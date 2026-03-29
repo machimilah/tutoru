@@ -22,7 +22,7 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
     <div className="relative flex-1 min-w-[160px]">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-2 px-4 py-3 bg-card rounded-lg border border-border hover:border-primary/40 transition-colors text-left font-body"
+        className="w-full flex items-center gap-2 px-4 py-3 bg-card rounded-2xl border border-border hover:border-primary/40 transition-colors text-left font-body"
       >
         <span className="text-muted-foreground">{icon}</span>
         <span className={value ? "text-foreground font-medium" : "text-muted-foreground"}>
@@ -32,7 +32,7 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full mt-2 left-0 right-0 z-20 bg-popover border border-border rounded-lg shadow-xl max-h-48 overflow-y-auto">
+          <div className="absolute top-full mt-2 left-0 right-0 z-20 bg-popover border border-border rounded-2xl shadow-xl max-h-48 overflow-y-auto">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className="w-full text-left px-4 py-2 text-sm text-muted-foreground hover:bg-accent/10 transition-colors"
@@ -72,7 +72,7 @@ const SearchFilters = () => {
           placeholder="Search for a tutor, subject, or topic..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full pl-14 pr-32 py-4 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-base font-body shadow-sm transition-all"
+          className="w-full pl-14 pr-32 py-4 bg-card border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-base font-body shadow-sm transition-all"
         />
         <Button variant="hero" size="lg" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg">
           Search
