@@ -11,32 +11,32 @@ const TUTORS = [
 ];
 
 const TutorCard = ({ tutor }: { tutor: typeof TUTORS[0] }) => (
-  <Link to={`/tutor/${tutor.id}`} className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 block">
-    <div className="flex items-start gap-4">
-      <div className="w-12 h-12 rounded-full bg-primary/10 text-primary font-display font-bold flex items-center justify-center text-sm shrink-0">
+  <Link to={`/tutor/${tutor.id}`} className="group bg-card border border-border rounded-2xl p-4 md:p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 block">
+    <div className="flex items-start gap-3 md:gap-4">
+      <div className="w-10 md:w-12 h-10 md:h-12 rounded-full bg-primary/10 text-primary font-display font-bold flex items-center justify-center text-xs md:text-sm shrink-0">
         {tutor.avatar}
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-display font-semibold text-foreground truncate">{tutor.name}</h3>
-        <p className="text-sm text-muted-foreground truncate">{tutor.university}</p>
+        <h3 className="font-display font-semibold text-sm md:text-base text-foreground truncate">{tutor.name}</h3>
+        <p className="text-xs md:text-sm text-muted-foreground truncate">{tutor.university}</p>
       </div>
       <div className="text-right shrink-0">
-        <span className="font-display font-bold text-foreground text-lg">${tutor.price}</span>
+        <span className="font-display font-bold text-base md:text-lg text-foreground">${tutor.price}</span>
         <span className="text-xs text-muted-foreground">/hr</span>
       </div>
     </div>
     <div className="mt-3 flex items-center gap-2">
-      <BookOpen className="w-3.5 h-3.5 text-accent" />
-      <span className="text-sm font-medium text-foreground">{tutor.subject}</span>
+      <BookOpen className="w-3 md:w-3.5 h-3 md:h-3.5 text-accent shrink-0" />
+      <span className="text-xs md:text-sm font-medium text-foreground truncate">{tutor.subject}</span>
     </div>
-    <div className="mt-3 flex items-center justify-between">
+    <div className="mt-3 flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
-        <Star className="w-4 h-4 fill-primary text-primary" />
-        <span className="text-sm font-semibold text-foreground">{tutor.rating}</span>
+        <Star className="w-3.5 md:w-4 h-3.5 md:h-4 fill-primary text-primary shrink-0" />
+        <span className="text-xs md:text-sm font-semibold text-foreground">{tutor.rating}</span>
         <span className="text-xs text-muted-foreground">({tutor.reviews})</span>
       </div>
       <div className="flex items-center gap-1 text-muted-foreground">
-        <MapPin className="w-3.5 h-3.5" />
+        <MapPin className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0" />
         <span className="text-xs">{tutor.area}</span>
       </div>
     </div>
@@ -45,14 +45,14 @@ const TutorCard = ({ tutor }: { tutor: typeof TUTORS[0] }) => (
 
 const FeaturedTutors = () => (
   <section className="w-full max-w-6xl mx-auto px-4">
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-start md:items-center justify-between mb-6 gap-4">
       <div>
-        <h2 className="font-display text-2xl font-bold text-foreground">Featured Tutors</h2>
-        <p className="text-muted-foreground text-sm mt-1">Top-rated students ready to help you succeed</p>
+        <h2 className="font-display text-xl md:text-2xl font-bold text-foreground">Featured Tutors</h2>
+        <p className="text-muted-foreground text-xs md:text-sm mt-1">Top-rated students ready to help you succeed</p>
       </div>
-      <Link to="/find-tutors" className="text-sm text-primary font-medium hover:underline underline-offset-4">View all →</Link>
+      <Link to="/find-tutors" className="text-xs md:text-sm text-primary font-medium hover:underline underline-offset-4 whitespace-nowrap">View all →</Link>
     </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
       {TUTORS.map((tutor) => (
         <TutorCard key={tutor.name} tutor={tutor} />
       ))}

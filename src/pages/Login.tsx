@@ -9,7 +9,7 @@ const Login = () => (
     <div className="flex items-center justify-center px-4 py-20">
       <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8">
         <h1 className="font-display text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
-        <p className="text-muted-foreground text-sm text-center mb-8">Log in to your StudyMate account</p>
+        <p className="text-muted-foreground text-sm text-center mb-8">Log in to your TutorU account</p>
 
         <div className="space-y-4">
           <div>

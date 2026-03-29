@@ -26,7 +26,15 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
   useEffect(() => {
     if (open && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
-      setPos({ top: rect.bottom + 8, left: rect.left, width: Math.max(rect.width, 220) });
+      const dropdownWidth = Math.max(rect.width, 220);
+      let left = rect.left;
+
+      // Adjust for viewport overflow on mobile
+      if (left + dropdownWidth > window.innerWidth - 16) {
+        left = window.innerWidth - dropdownWidth - 16;
+      }
+
+      setPos({ top: rect.bottom + 8, left, width: dropdownWidth });
     }
   }, [open]);
 
@@ -49,7 +57,7 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
       <button
         ref={triggerRef}
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200 font-body text-sm
+        className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-full border transition-all duration-200 font-body text-xs md:text-sm
           ${value
             ? "bg-primary/10 border-primary/30 text-primary font-medium"
             : "bg-card border-border text-muted-foreground hover:border-primary/30 hover:bg-card/80"
@@ -57,11 +65,11 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
         `}
       >
         <span className="shrink-0">{icon}</span>
-        <span className="truncate max-w-[120px]">{value || label}</span>
+        <span className="truncate max-w-[90px] md:max-w-[120px]">{value || label}</span>
         {value ? (
-          <X className="w-3.5 h-3.5 shrink-0 hover:text-foreground" onClick={(e) => { e.stopPropagation(); onChange(""); }} />
+          <X className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 hover:text-foreground" onClick={(e) => { e.stopPropagation(); onChange(""); }} />
         ) : (
-          <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
         )}
       </button>
 
@@ -120,29 +128,29 @@ const SearchFilters = () => {
   const handleSearch = () => navigate("/find-tutors");
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto px-2 md:px-0">
       {/* Main search bar */}
-      <div className="relative mb-5">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+      <div className="relative mb-3 md:mb-5">
+        <Search className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 md:w-5 h-4 md:h-5" />
         <input
           type="text"
-          placeholder="Search for a tutor, subject, or topic..."
+          placeholder="Search for a tutor..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="w-full pl-14 pr-32 py-4 bg-card border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 text-base font-body shadow-sm transition-all"
+          className="w-full pl-11 md:pl-14 pr-24 md:pr-32 py-3 md:py-4 bg-card border border-border rounded-2xl text-sm md:text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 font-body shadow-sm transition-all"
         />
-        <Button variant="hero" size="lg" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl" onClick={handleSearch}>
+        <Button variant="hero" size="lg" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl text-xs md:text-sm h-8 md:h-10 px-3 md:px-4" onClick={handleSearch}>
           Search
         </Button>
       </div>
 
       {/* Filter pills */}
       <div className="flex flex-wrap gap-2 justify-center">
-        <FilterDropdown label="Course" icon={<GraduationCap className="w-4 h-4" />} options={COURSES} value={course} onChange={setCourse} />
-        <FilterDropdown label="University" icon={<Building2 className="w-4 h-4" />} options={UNIVERSITIES} value={university} onChange={setUniversity} />
-        <FilterDropdown label="Area" icon={<MapPin className="w-4 h-4" />} options={AREAS} value={area} onChange={setArea} />
-        <FilterDropdown label="Language" icon={<Globe className="w-4 h-4" />} options={LANGUAGES} value={language} onChange={setLanguage} />
+        <FilterDropdown label="Course" icon={<GraduationCap className="w-3.5 md:w-4 h-3.5 md:h-4" />} options={COURSES} value={course} onChange={setCourse} />
+        <FilterDropdown label="University" icon={<Building2 className="w-3.5 md:w-4 h-3.5 md:h-4" />} options={UNIVERSITIES} value={university} onChange={setUniversity} />
+        <FilterDropdown label="Area" icon={<MapPin className="w-3.5 md:w-4 h-3.5 md:h-4" />} options={AREAS} value={area} onChange={setArea} />
+        <FilterDropdown label="Language" icon={<Globe className="w-3.5 md:w-4 h-3.5 md:h-4" />} options={LANGUAGES} value={language} onChange={setLanguage} />
       </div>
     </div>
   );

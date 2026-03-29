@@ -34,7 +34,7 @@ const BecomeTutor = () => (
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-8 text-left max-w-lg mx-auto">
-        <h2 className="font-display text-xl font-bold text-foreground mb-4">Why tutor with StudyMate?</h2>
+        <h2 className="font-display text-xl font-bold text-foreground mb-4">Why tutor with TutorU?</h2>
         <ul className="space-y-3">
           {["Flexible schedule — you choose when", "Set your own hourly rate", "Build teaching experience for your resume", "Help peers and make a real impact"].map((item) => (
             <li key={item} className="flex items-center gap-3 text-sm text-foreground">
