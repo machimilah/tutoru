@@ -10,7 +10,7 @@ const TUTORS = [
 ];
 
 const TutorCard = ({ tutor }: { tutor: typeof TUTORS[0] }) => (
-  <div className="group bg-card border border-border rounded-xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+  <div className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
     <div className="flex items-start gap-4">
       <div className="w-12 h-12 rounded-full bg-primary/10 text-primary font-display font-bold flex items-center justify-center text-sm shrink-0">
         {tutor.avatar}
