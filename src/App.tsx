@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index.tsx";
 import FindTutors from "./pages/FindTutors.tsx";
 import TutorProfile from "./pages/TutorProfile.tsx";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </TooltipProvider>
   </QueryClientProvider>
 );
