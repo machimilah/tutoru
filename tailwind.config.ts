@@ -82,8 +82,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Space Grotesk', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif'],
+        display: ['Montserrat', 'sans-serif'],
+        body: ['Montserrat', 'sans-serif'],
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

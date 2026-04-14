@@ -2,6 +2,7 @@ import { Search, MapPin, GraduationCap, Building2, Globe, ChevronDown, X, Check 
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 
 const COURSES = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "Economics", "Literature", "History", "Psychology", "Engineering"];
 const UNIVERSITIES = ["MIT", "Stanford", "Harvard", "Oxford", "Cambridge", "UCLA", "NYU", "Columbia", "Yale", "Princeton"];
@@ -73,7 +74,7 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
         )}
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           ref={panelRef}
           className="fixed z-[100] bg-popover border border-border rounded-2xl shadow-2xl overflow-hidden animate-fade-up"
@@ -111,7 +112,8 @@ const FilterDropdown = ({ label, icon, options, value, onChange }: FilterDropdow
               </button>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

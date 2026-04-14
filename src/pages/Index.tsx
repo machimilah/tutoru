@@ -6,6 +6,7 @@ import Scene3D from "@/components/Scene3D";
 import ContactForm from "@/components/ContactForm";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Show, SignInButton, SignUpButton } from "@clerk/react";
 
 const Index = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -15,9 +16,9 @@ const Index = () => {
     <Navbar />
 
     {/* Hero Section */}
-    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px]">
+    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center justify-center px-4 pt-10 pb-8">
       <Scene3D />
-      <div className="relative z-10 flex flex-col items-center pt-12 md:pt-20 pb-12 md:pb-16 px-4 md:px-8">
+      <div className="relative z-10 flex flex-col items-center px-8 py-16 md:px-12 md:py-28 mb-8 backdrop-blur-[2px] bg-background/20 border border-white/20 dark:border-white/10 rounded-[3rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] w-full max-w-5xl">
         <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold text-foreground text-center max-w-3xl leading-tight">
           Learn from students
           <span className="text-primary"> who get it</span>
@@ -25,6 +26,7 @@ const Index = () => {
         <p className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-xl mt-4 md:mt-5 mb-8 md:mb-10">
           Find affordable tutors from your university who've aced the same courses you're taking.
         </p>
+
         <SearchFilters />
       </div>
     </section>
