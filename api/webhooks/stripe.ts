@@ -19,7 +19,7 @@ export default async function handler(req: Request) {
   }
 
   const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2025-02-24.acacia',
+    apiVersion: '2026-03-25.dahlia',
     httpClient: Stripe.createFetchHttpClient(),
   });
 
