@@ -54,44 +54,37 @@ export default async function handler(req: Request) {
 
     if (session.payment_status === 'paid' && amountPaid > 0) {
       const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseKey) {
-        console.error('Missing Supabase Service Key');
-        return new Response('Missing Supabase Service Key', { status: 500 });
+        console.error('Missing Supabase configuration');
+        return new Response('Server Configuration Error', { status: 500 });
       }
 
-      const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
-
       try {
-        // We use RPC call or manual lookup and update (Edge prevents some postgres functions without RPC if not using HTTP PostgREST directly).
-        // Best approach via Data API is to retrieve current balance, then add.
-        // Or if you only have a pure Edge env, we can do an `rpc` or sequential calls.
-        const { data: user, error: fetchError } = await supabaseAdmin
-          .from('users')
-          .select('wallet_balance')
-          .eq('id', userId)
-          .single();
+        // Call the same RPC function used in manual verification
+        const rpcRes = await fetch(`${supabaseUrl}/rest/v1/rpc/increment_wallet`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            amount: amountPaid,
+          }),
+        });
 
-        if (fetchError) {
-          console.error('Error fetching user:', fetchError);
-          // Insert a new row if they didn't exist or handle error natively
-          return new Response('Error finding user', { status: 500 });
+        if (!rpcRes.ok) {
+          const errText = await rpcRes.text();
+          console.error('Supabase RPC error:', errText);
+          throw new Error(errText);
         }
-
-        const currentBalance = Number(user.wallet_balance || 0);
-        const newBalance = currentBalance + amountPaid;
-
-        const { error: updateError } = await supabaseAdmin
-          .from('users')
-          .update({ wallet_balance: newBalance })
-          .eq('id', userId);
-
-        if (updateError) throw updateError;
         
         console.log(`Successfully credited $${amountPaid} to User ${userId}`);
       } catch (err: any) {
-        console.error('Supabase Transaction Error', err);
+        console.error('Balance update error:', err);
         return new Response('Database Update Error', { status: 500 });
       }
     }

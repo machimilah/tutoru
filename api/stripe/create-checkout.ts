@@ -36,7 +36,7 @@ export default async function handler(req: Request) {
     const priceInCents = Math.round(Number(amount) * 100);
 
     // Provide the host URL dynamically or from env
-    const host = req.headers.get('origin') || process.env.VITE_APP_URL || 'http://localhost:5173';
+    const host = req.headers.get('origin') || process.env.VITE_APP_URL || process.env.APP_URL || 'http://localhost:5173';
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
