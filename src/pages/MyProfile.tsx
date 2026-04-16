@@ -1,9 +1,11 @@
 import { UserButton, useUser, Show } from "@clerk/react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Wallet, BookOpen, Settings, Paintbrush, Loader2, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
@@ -14,6 +16,61 @@ export default function MyProfile() {
   const queryClient = useQueryClient();
   const [isCreatingClass, setIsCreatingClass] = useState(false);
   const [newClass, setNewClass] = useState({ subject: '', university: '', price: '', area: 'Online' });
+  const [isTopUpLoading, setIsTopUpLoading] = useState(false);
+  const [isTopUpOpen, setIsTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState('20');
+  const [activeTab, setActiveTab] = useState('overview');
+  const verifyCalledRef = useRef(false);
+  
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkoutStatus = searchParams.get('checkout');
+    const sessionId = searchParams.get('session_id');
+
+    if (checkoutStatus === 'success' && sessionId && !verifyCalledRef.current) {
+      verifyCalledRef.current = true;
+      setActiveTab('wallet');
+
+      const toastId = toast.loading('Verifying your payment...');
+
+      fetch('/api/stripe/verify-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId })
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Verification failed');
+          // Invalidate ALL user-data queries regardless of user ID
+          await queryClient.invalidateQueries({ queryKey: ['user-data'] });
+          toast.success('Payment verified! Your balance has been updated.', { id: toastId });
+          // Clean URL without triggering React re-render
+          window.history.replaceState({}, '', '/my-profile');
+        })
+        .catch((err) => {
+          toast.error(`Failed to verify payment: ${err.message}`, { id: toastId });
+        });
+    } else if (checkoutStatus === 'canceled' && !verifyCalledRef.current) {
+      verifyCalledRef.current = true;
+      setActiveTab('wallet');
+      toast.error('Payment was canceled');
+      window.history.replaceState({}, '', '/my-profile');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const { data: userData } = useQuery({
+    queryKey: ['user-data', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase.from('users').select('wallet_balance').eq('id', user.id).single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
+  });
 
   const { data: myClasses, isLoading: isLoadingClasses } = useQuery({
     queryKey: ['my-classes', user?.id],
@@ -81,13 +138,42 @@ export default function MyProfile() {
     });
   };
 
+  const handleTopUp = async () => {
+    if (!user?.id) return;
+    const amount = parseFloat(topUpAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Invalid amount");
+      return;
+    }
+
+    try {
+      setIsTopUpLoading(true);
+      const res = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, userId: user.id })
+      });
+      
+      const session = await res.json();
+      if (session.url) {
+        window.location.href = session.url;
+      } else {
+        throw new Error(session.error || 'Failed to create checkout session');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || 'Error redirecting to checkout');
+      setIsTopUpLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 pt-24">
       <Navbar />
       <section className="flex flex-col items-center justify-center px-4 pt-10 pb-8 min-h-[60vh]">
         <div className="relative z-10 flex flex-col md:flex-row gap-8 px-6 py-10 md:px-10 md:py-16 mb-8 backdrop-blur-[2px] bg-background/80 border border-white/20 dark:border-white/10 rounded-[2.5rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.10)] w-full max-w-5xl">
           <Show when="signed-in">
-            <Tabs defaultValue="overview" className="flex flex-col md:flex-row w-full gap-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col md:flex-row w-full gap-8">
               {/* Sidebar Tabs */}
               <div className="w-full md:w-64 flex flex-col gap-6 shrink-0">
                 <div className="flex flex-col items-center gap-2 mb-4 p-4 bg-card/50 rounded-2xl border border-border/50">
@@ -154,10 +240,42 @@ export default function MyProfile() {
                 <TabsContent value="wallet" className="mt-0 h-full animate-fade-up">
                   <div className="bg-card/80 p-6 md:p-8 rounded-2xl shadow-sm border border-border w-full flex flex-col gap-6">
                     <h2 className="text-2xl font-display font-bold mb-2">Wallet & Billing</h2>
-                    <div className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl border border-primary/20 flex flex-col items-center justify-center py-10">
+                    <div className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl border border-primary/20 flex flex-col items-center justify-center py-10 max-w-md mx-auto w-full">
                       <div className="text-sm font-medium text-muted-foreground mb-2">Available Balance</div>
-                      <div className="text-4xl font-bold font-display">$0.00</div>
-                      <Button variant="hero" className="mt-6">Add Funds</Button>
+                      <div className="text-4xl font-bold font-display">${Number(userData?.wallet_balance || 0).toFixed(2)}</div>
+                      
+                      <Dialog open={isTopUpOpen} onOpenChange={setIsTopUpOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="hero" className="mt-8 px-8">Add Funds</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Add Funds</DialogTitle>
+                            <DialogDescription>
+                              Enter the amount you'd like to add to your TutorU wallet.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex flex-col gap-3 py-4">
+                            <label className="text-sm font-medium text-foreground">Amount ($)</label>
+                            <input 
+                              type="number" 
+                              min="1" 
+                              value={topUpAmount} 
+                              onChange={e => setTopUpAmount(e.target.value)} 
+                              className="w-full px-4 py-2 bg-background border border-border rounded-xl text-lg font-medium shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" 
+                            />
+                          </div>
+                          <DialogFooter className="sm:justify-between">
+                            <Button type="button" variant="ghost" onClick={() => setIsTopUpOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button variant="hero" onClick={handleTopUp} disabled={isTopUpLoading}>
+                              {isTopUpLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                              Proceed to Checkout
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </TabsContent>

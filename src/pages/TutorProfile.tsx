@@ -2,8 +2,12 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Link, useParams } from "react-router-dom";
 import { Star, Clock, MapPin, BookOpen, MessageCircle, Calendar, Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { useUser } from "@clerk/react";
+import { useState } from "react";
+import { CheckoutDialog } from "@/components/CheckoutDialog";
+import { toast } from "sonner";
 
 const fetchTutorInfo = async (tutorId: string) => {
   const { data: user, error: userError } = await supabase
@@ -26,11 +30,74 @@ const fetchTutorInfo = async (tutorId: string) => {
 
 const TutorProfile = () => {
   const { id } = useParams();
+  const { user: currentUser } = useUser();
+  const queryClient = useQueryClient();
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['tutor-profile', id],
     queryFn: () => fetchTutorInfo(id as string),
     enabled: !!id
+  });
+
+  const { data: studentData } = useQuery({
+    queryKey: ['student-data', currentUser?.id],
+    queryFn: async () => {
+      if (!currentUser?.id) return null;
+      const { data, error } = await supabase.from('users').select('wallet_balance').eq('id', currentUser.id).single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!currentUser?.id
+  });
+
+  const bookClassMutation = useMutation({
+    mutationFn: async (classData: any) => {
+      if (!currentUser?.id) throw new Error("Not logged in");
+      
+      const currentBalance = Number(studentData?.wallet_balance || 0);
+      const price = Number(classData.price);
+      
+      if (currentBalance < price) {
+        throw new Error("Insufficient funds");
+      }
+
+      // Pre-sync logged in user just in case
+      await supabase.from('users').upsert({
+        id: currentUser.id,
+        email: currentUser.primaryEmailAddress?.emailAddress,
+        username: currentUser.username || currentUser.fullName || "Student"
+      }, { onConflict: 'id' });
+
+      // Create booking
+      const { error: bookingError } = await supabase.from('bookings').insert([{
+        class_id: classData.id,
+        student_id: currentUser.id,
+        tutor_id: classData.tutor_id,
+        price: price
+      }]);
+
+      if (bookingError) throw bookingError;
+
+      // Deduct balance
+      const newBalance = currentBalance - price;
+      const { error: updateError } = await supabase.from('users')
+        .update({ wallet_balance: newBalance })
+        .eq('id', currentUser.id);
+
+      if (updateError) throw updateError;
+      
+      return true;
+    },
+    onSuccess: () => {
+      toast.success("Class booked successfully!");
+      setIsCheckoutOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['student-data', currentUser?.id] });
+    },
+    onError: (err: any) => {
+      toast.error(`Error booking class: ${err.message}`);
+    }
   });
 
   if (isLoading) {
@@ -128,7 +195,11 @@ const TutorProfile = () => {
                 </div>
                 <div className="space-y-3">
                   {classes.map((c: any) => (
-                    <div key={c.id} className="flex justify-between items-center p-3 sm:p-4 rounded-xl border border-border bg-background/50">
+                    <div 
+                      key={c.id} 
+                      onClick={() => setSelectedClassId(c.id)}
+                      className={`flex justify-between items-center p-3 sm:p-4 rounded-xl border transition-all cursor-pointer ${selectedClassId === c.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border bg-background/50 hover:border-primary/50'}`}
+                    >
                       <div>
                         <div className="font-medium text-foreground">{c.subject}</div>
                         <div className="text-xs text-muted-foreground">{c.area}</div>
@@ -155,12 +226,38 @@ const TutorProfile = () => {
                  </li>
               </ul>
             </div>
-            <Button variant="hero" size="lg" className="w-full rounded-2xl">
+            <Button 
+              variant="hero" 
+              size="lg" 
+              className="w-full rounded-2xl" 
+              onClick={() => {
+                if (!currentUser) {
+                  toast.error("Please login to book a session");
+                  return;
+                }
+                if (!selectedClassId) {
+                  toast.error("Please select a class first");
+                  return;
+                }
+                setIsCheckoutOpen(true);
+              }}
+            >
               <MessageCircle className="w-4 h-4 mr-2" /> Book a Session
             </Button>
           </div>
         </div>
       </div>
+      
+      {selectedClassId && (
+        <CheckoutDialog 
+          open={isCheckoutOpen} 
+          onOpenChange={setIsCheckoutOpen}
+          selectedClass={classes.find((c: any) => c.id === selectedClassId)}
+          walletBalance={Number(studentData?.wallet_balance || 0)}
+          onConfirm={() => bookClassMutation.mutate(classes.find((c: any) => c.id === selectedClassId))}
+          isLoading={bookClassMutation.isPending}
+        />
+      )}
     </div>
   );
 };
